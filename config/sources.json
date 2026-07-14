@@ -1,0 +1,56 @@
+[
+  {
+    "name": "OpenAI News",
+    "url": "https://openai.com/news/rss.xml",
+    "category": "官方动态",
+    "priority": 10
+  },
+  {
+    "name": "Google AI",
+    "url": "https://blog.google/technology/ai/rss/",
+    "category": "官方动态",
+    "priority": 9
+  },
+  {
+    "name": "Google DeepMind",
+    "url": "https://deepmind.google/blog/rss.xml",
+    "category": "研究与模型",
+    "priority": 9
+  },
+  {
+    "name": "Hugging Face Blog",
+    "url": "https://huggingface.co/blog/feed.xml",
+    "category": "开源生态",
+    "priority": 8
+  },
+  {
+    "name": "Microsoft AI Blog",
+    "url": "https://news.microsoft.com/source/topics/ai/feed/",
+    "category": "官方动态",
+    "priority": 8
+  },
+  {
+    "name": "NVIDIA AI Blog",
+    "url": "https://blogs.nvidia.com/blog/category/deep-learning/feed/",
+    "category": "官方动态",
+    "priority": 8
+  },
+  {
+    "name": "TechCrunch AI",
+    "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+    "category": "行业资讯",
+    "priority": 7
+  },
+  {
+    "name": "MIT Technology Review AI",
+    "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed",
+    "category": "行业资讯",
+    "priority": 7
+  },
+  {
+    "name": "arXiv AI",
+    "url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.AI&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "category": "论文",
+    "priority": 5
+  }
+]
