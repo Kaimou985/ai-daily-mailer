@@ -37,6 +37,7 @@ class Settings:
     max_per_source: int
     request_timeout: int
     timezone: str
+    markdown_download_url: str
 
     @property
     def llm_enabled(self) -> bool:
@@ -88,6 +89,7 @@ def load_settings() -> Settings:
         max_per_source=max(1, int(os.getenv("MAX_PER_SOURCE", "5"))),
         request_timeout=max(5, int(os.getenv("REQUEST_TIMEOUT", "20"))),
         timezone=os.getenv("TIMEZONE", "Asia/Shanghai").strip(),
+        markdown_download_url=os.getenv("MARKDOWN_DOWNLOAD_URL", "").strip(),
     )
 
 

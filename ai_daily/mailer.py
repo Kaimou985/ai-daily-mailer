@@ -7,7 +7,13 @@ from email.message import EmailMessage
 from .config import Settings
 
 
-def send_email(settings: Settings, subject: str, text_body: str, html_body: str) -> None:
+def send_email(
+    settings: Settings,
+    subject: str,
+    text_body: str,
+    html_body: str,
+    markdown_attachment: str = "",
+) -> None:
     settings.validate_mail()
     message = EmailMessage()
     message["Subject"] = subject
@@ -15,6 +21,13 @@ def send_email(settings: Settings, subject: str, text_body: str, html_body: str)
     message["To"] = ", ".join(settings.mail_to)
     message.set_content(text_body)
     message.add_alternative(html_body, subtype="html")
+    if markdown_attachment:
+        message.add_attachment(
+            markdown_attachment.encode("utf-8"),
+            maintype="text",
+            subtype="markdown",
+            filename="AI-daily-brief.md",
+        )
 
     context = ssl.create_default_context()
     if settings.smtp_use_ssl:
@@ -28,4 +41,3 @@ def send_email(settings: Settings, subject: str, text_body: str, html_body: str)
             smtp.ehlo()
             smtp.login(settings.smtp_user, settings.smtp_password)
             smtp.send_message(message)
-

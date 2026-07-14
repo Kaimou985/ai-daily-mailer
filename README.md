@@ -73,7 +73,13 @@ LLM_MODEL=your_model_name
 
 `FULL_ARTICLE_BRIEF=true` 会自动提取新闻正文作为简报素材；`BRIEF_MAX_CHARS=2200` 控制每条简报在翻译前的最大长度。原文链接仅作为邮件底部的信息核验入口。
 
-## 4. GitHub Actions 每天自动发送
+## 4. Markdown 下载
+
+每次运行会在 `output` 目录生成 `latest.md` 和按日期命名的 Markdown 简报，并将 Markdown 作为邮件附件发送。GitHub Actions 还会把文件部署到 GitHub Pages，邮件末尾会显示“下载 Markdown 简报”按钮。
+
+首次部署前，在 GitHub 仓库进入 `Settings → Pages`，将 `Build and deployment → Source` 设置为 `GitHub Actions`。GitHub Free 的 Pages 需要使用公开仓库；私有仓库需要支持私有 Pages 的付费计划。
+
+## 5. GitHub Actions 每天自动发送
 
 将项目推送到 GitHub，然后进入：
 
@@ -96,7 +102,7 @@ LLM_MODEL=your_model_name
 
 工作流默认每天北京时间 08:00 和 22:00 运行，也可以在 Actions 页面手动触发。工作流显式使用 `Asia/Shanghai` 时区，无需手工换算 UTC。由于 GitHub Actions 的队列调度，实际邮件可能在计划时间后数分钟到达。如需改时间，编辑 `.github/workflows/daily-ai-news.yml` 中的 cron。
 
-## 5. 自定义资讯源
+## 6. 自定义资讯源
 
 编辑 `config/sources.json` 即可增删 RSS/Atom 源。`priority` 越大，在邮件中越靠前。单个资讯源失效不会阻止其他内容发送。
 

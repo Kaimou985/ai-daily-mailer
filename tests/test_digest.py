@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime, timezone
 
-from ai_daily.digest import build_html, build_text
+from ai_daily.digest import build_html, build_markdown, build_text
 from ai_daily.feeds import clean_text, select_articles
 from ai_daily.models import Article
 from ai_daily.translation import looks_chinese
@@ -36,6 +36,18 @@ class DigestTests(unittest.TestCase):
         result = build_text([sample_article()], "今日总览")
         self.assertIn("Example AI", result)
         self.assertIn("值得关注", result)
+
+    def test_markdown_digest_contains_article(self):
+        result = build_markdown([sample_article()], "今日总览", "Asia/Shanghai")
+        self.assertIn("# AI 每日资讯简报", result)
+        self.assertIn("某公司发布新 AI 模型", result)
+        self.assertIn("[\u67e5看来源](https://example.com/article)", result)
+
+    def test_html_has_markdown_download_link(self):
+        url = "https://example.github.io/repo/download.html"
+        result = build_html([sample_article()], "今日总览", "Asia/Shanghai", url)
+        self.assertIn("下载 Markdown 简报", result)
+        self.assertIn(url, result)
 
     def test_selection_caps_a_single_source(self):
         articles = [sample_article() for _ in range(6)]

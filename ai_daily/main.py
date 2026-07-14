@@ -8,7 +8,13 @@ from zoneinfo import ZoneInfo
 
 from .config import ROOT, load_settings, load_sources
 from .article_content import fetch_article_contents
-from .digest import build_html, build_text
+from .digest import (
+    build_download_page,
+    build_html,
+    build_markdown,
+    build_pages_index,
+    build_text,
+)
 from .feeds import fetch_articles, select_articles
 from .mailer import send_email
 from .summarizer import enrich_with_llm
@@ -56,20 +62,28 @@ def run(preview: bool = False) -> Path | None:
         focus_titles = "；".join(article.display_title for article in articles[:4])
         overview = f"今日共整理 {len(articles)} 条 AI 动态。重点包括：{focus_titles}。"
 
-    html_body = build_html(articles, overview, settings.timezone)
-    text_body = build_text(articles, overview)
     now = datetime.now(ZoneInfo(settings.timezone))
+    markdown_body = build_markdown(articles, overview, settings.timezone)
+    output_dir = ROOT / "output"
+    output_dir.mkdir(exist_ok=True)
+    (output_dir / "latest.md").write_text(markdown_body, encoding="utf-8")
+    (output_dir / f"ai-daily-{now:%Y-%m-%d}.md").write_text(markdown_body, encoding="utf-8")
+    (output_dir / "download.html").write_text(build_download_page(), encoding="utf-8")
+    (output_dir / "index.html").write_text(build_pages_index(), encoding="utf-8")
+
+    html_body = build_html(
+        articles, overview, settings.timezone, settings.markdown_download_url
+    )
+    text_body = build_text(articles, overview, settings.markdown_download_url)
     subject = f"【AI 每日资讯】{now:%Y-%m-%d} · {len(articles)} 条值得关注的动态"
 
     if preview:
-        output_dir = ROOT / "output"
-        output_dir.mkdir(exist_ok=True)
         output_path = output_dir / f"ai-daily-{now:%Y-%m-%d}.html"
         output_path.write_text(html_body, encoding="utf-8")
         print(f"预览已生成：{output_path}")
         return output_path
 
-    send_email(settings, subject, text_body, html_body)
+    send_email(settings, subject, text_body, html_body, markdown_body)
     print(f"邮件已发送至：{', '.join(settings.mail_to)}")
     return None
 
