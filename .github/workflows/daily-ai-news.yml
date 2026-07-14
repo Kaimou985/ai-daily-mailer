@@ -33,11 +33,14 @@ jobs:
           MAIL_TO: ${{ secrets.MAIL_TO }}
           SMTP_USE_SSL: ${{ secrets.SMTP_USE_SSL }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
-          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LLM_BASE_URL: https://api.deepseek.com
+          LLM_MODEL: deepseek-v4-flash
+          LLM_CONTENT_CHARS: "8000"
+          LLM_MAX_WORKERS: "4"
           TRANSLATION_MODE: auto
           FULL_ARTICLE_BRIEF: "true"
           BRIEF_MAX_CHARS: "2200"
+          ARTICLE_CONTENT_MAX_CHARS: "10000"
           TIMEZONE: Asia/Shanghai
           LOOKBACK_HOURS: "36"
           MAX_ARTICLES: "18"
