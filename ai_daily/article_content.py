@@ -90,7 +90,7 @@ def _session() -> requests.Session:
 def _fetch_one(article: Article, timeout: int, max_chars: int) -> tuple[Article, str | None]:
     # arXiv 的 Feed 本身已包含完整摘要，无需再请求页面。
     if article.category == "论文" or "arxiv.org" in article.url.lower():
-        article.content = make_extractive_brief(article.summary, max_chars)
+        article.content = article.summary[:max_chars]
         return article, None
     try:
         session = _session()
@@ -99,10 +99,10 @@ def _fetch_one(article: Article, timeout: int, max_chars: int) -> tuple[Article,
         response.encoding = response.apparent_encoding or response.encoding
         extracted = extract_article_text(response.text)
         source_text = extracted if len(extracted) >= 250 else article.summary
-        article.content = make_extractive_brief(source_text, max_chars)
+        article.content = source_text[:max_chars]
         return article, None
     except Exception as exc:
-        article.content = make_extractive_brief(article.summary, max_chars)
+        article.content = article.summary[:max_chars]
         return article, f"{article.source} 正文提取失败，已使用 RSS 摘要：{type(exc).__name__}"
 
 
@@ -117,4 +117,3 @@ def fetch_article_contents(
             if warning:
                 warnings.append(warning)
     return warnings
-

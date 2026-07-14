@@ -33,7 +33,7 @@ def run(preview: bool = False) -> Path | None:
 
     if settings.full_article_brief and articles:
         content_warnings = fetch_article_contents(
-            articles, settings.request_timeout, settings.brief_max_chars
+            articles, settings.request_timeout, settings.article_content_max_chars
         )
         print(f"正文简报素材提取完成：{len(articles)} 条，{len(content_warnings)} 条回退")
         for warning in content_warnings:
@@ -44,7 +44,19 @@ def run(preview: bool = False) -> Path | None:
     use_free_translation = settings.translation_mode in {"auto", "free"}
     if use_llm:
         try:
-            overview = enrich_with_llm(articles, settings)
+            overview, failed_articles, llm_warnings = enrich_with_llm(articles, settings)
+            print(
+                f"DeepSeek 整篇总结完成：{len(articles) - len(failed_articles)} 条，"
+                f"{len(failed_articles)} 条回退"
+            )
+            for warning in llm_warnings:
+                print(f"  - {warning}")
+            if failed_articles and settings.translation_mode == "auto":
+                translation_warnings = translate_articles(
+                    failed_articles, settings.brief_max_chars
+                )
+                for warning in translation_warnings:
+                    print(f"  - {warning}")
         except Exception as exc:
             print(f"模型摘要失败：{exc}", file=sys.stderr)
             if settings.translation_mode == "auto":
@@ -53,7 +65,7 @@ def run(preview: bool = False) -> Path | None:
         print("TRANSLATION_MODE=llm，但未配置 LLM_API_KEY/LLM_MODEL，将保留原文。", file=sys.stderr)
 
     if use_free_translation and not any(article.title_zh for article in articles):
-        translation_warnings = translate_articles(articles)
+        translation_warnings = translate_articles(articles, settings.brief_max_chars)
         print(f"免费中文翻译完成：{len(articles)} 条，{len(translation_warnings)} 条提示")
         for warning in translation_warnings:
             print(f"  - {warning}")

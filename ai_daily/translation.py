@@ -4,6 +4,7 @@ import re
 
 from deep_translator import GoogleTranslator
 
+from .article_content import make_extractive_brief
 from .models import Article
 
 
@@ -36,7 +37,7 @@ def _paragraphize(text: str) -> str:
     return "\n\n".join(paragraphs)
 
 
-def translate_articles(articles: list[Article]) -> list[str]:
+def translate_articles(articles: list[Article], brief_max_chars: int = 2200) -> list[str]:
     """使用免费翻译生成中文标题和摘要；单条失败时保留原文。"""
     translator = GoogleTranslator(source="auto", target="zh-CN")
     warnings: list[str] = []
@@ -46,7 +47,9 @@ def translate_articles(articles: list[Article]) -> list[str]:
         except Exception as exc:
             warnings.append(f"{article.source} 标题翻译失败：{type(exc).__name__}")
         try:
-            source_text = article.content or article.summary
+            source_text = make_extractive_brief(
+                article.content or article.summary, brief_max_chars
+            )
             article.summary_zh = _paragraphize(_translate(translator, source_text, 4500))
         except Exception as exc:
             warnings.append(f"{article.source} 摘要翻译失败：{type(exc).__name__}")

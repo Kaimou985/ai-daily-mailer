@@ -58,11 +58,13 @@ python -m ai_daily
 
 ```dotenv
 LLM_API_KEY=your_key
-LLM_BASE_URL=https://api.openai.com/v1
-LLM_MODEL=your_model_name
+LLM_BASE_URL=https://api.deepseek.com
+LLM_MODEL=deepseek-v4-flash
 ```
 
 也可以替换成其他兼容接口的 `BASE_URL` 和模型名。
+
+配置 DeepSeek 后，系统会把每篇文章最多 8000 个字符的正文分别交给模型，生成 180-320 字的中文小短文、中文标题和价值分析，再根据全部简报生成当日总览。模型请求失败时会自动回退到免费翻译摘要。
 
 翻译模式由 `.env` 中的 `TRANSLATION_MODE` 控制：
 

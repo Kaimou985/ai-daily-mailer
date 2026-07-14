@@ -29,9 +29,12 @@ class Settings:
     llm_api_key: str
     llm_base_url: str
     llm_model: str
+    llm_content_chars: int
+    llm_max_workers: int
     translation_mode: str
     full_article_brief: bool
     brief_max_chars: int
+    article_content_max_chars: int
     lookback_hours: int
     max_articles: int
     max_per_source: int
@@ -79,11 +82,16 @@ def load_settings() -> Settings:
         mail_to=recipients,
         smtp_use_ssl=_as_bool(os.getenv("SMTP_USE_SSL"), True),
         llm_api_key=os.getenv("LLM_API_KEY", "").strip(),
-        llm_base_url=os.getenv("LLM_BASE_URL", "https://api.openai.com/v1").rstrip("/"),
-        llm_model=os.getenv("LLM_MODEL", "").strip(),
+        llm_base_url=os.getenv("LLM_BASE_URL", "https://api.deepseek.com").rstrip("/"),
+        llm_model=os.getenv("LLM_MODEL", "deepseek-v4-flash").strip(),
+        llm_content_chars=max(1000, min(20000, int(os.getenv("LLM_CONTENT_CHARS", "8000")))),
+        llm_max_workers=max(1, min(8, int(os.getenv("LLM_MAX_WORKERS", "4")))),
         translation_mode=translation_mode,
         full_article_brief=_as_bool(os.getenv("FULL_ARTICLE_BRIEF"), True),
         brief_max_chars=max(600, min(4500, int(os.getenv("BRIEF_MAX_CHARS", "2200")))),
+        article_content_max_chars=max(
+            2000, min(20000, int(os.getenv("ARTICLE_CONTENT_MAX_CHARS", "10000")))
+        ),
         lookback_hours=max(1, int(os.getenv("LOOKBACK_HOURS", "36"))),
         max_articles=max(1, int(os.getenv("MAX_ARTICLES", "18"))),
         max_per_source=max(1, int(os.getenv("MAX_PER_SOURCE", "5"))),
