@@ -1,0 +1,47 @@
+name: Send daily AI news
+
+on:
+  schedule:
+    # 每天北京时间 08:00 和 22:00
+    - cron: "0 8,22 * * *"
+      timezone: "Asia/Shanghai"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Fetch, summarize and send
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          SMTP_USE_SSL: ${{ secrets.SMTP_USE_SSL }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          TRANSLATION_MODE: auto
+          FULL_ARTICLE_BRIEF: "true"
+          BRIEF_MAX_CHARS: "2200"
+          TIMEZONE: Asia/Shanghai
+          LOOKBACK_HOURS: "36"
+          MAX_ARTICLES: "18"
+          MAX_PER_SOURCE: "5"
+        run: python -m ai_daily
