@@ -2,9 +2,9 @@ name: Send daily AI news
 
 on:
   schedule:
-    # 每天北京时间 08:00 和 22:00。
-    - cron: "0 8,22 * * *"
-      timezone: "Asia/Shanghai"
+    # 临时定时测试：01:40 UTC = 北京时间 09:40。
+    # 测试成功后请恢复为每天 08:05 / 22:05。
+    - cron: "40 1 * * *"
   workflow_dispatch:
 
 permissions:
