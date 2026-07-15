@@ -102,7 +102,7 @@ LLM_MODEL=deepseek-v4-flash
 | `LLM_BASE_URL` | 可选 |
 | `LLM_MODEL` | 可选 |
 
-工作流默认每天北京时间 08:00 和 22:00 运行，也可以在 Actions 页面手动触发。工作流显式使用 `Asia/Shanghai` 时区，无需手工换算 UTC。由于 GitHub Actions 的队列调度，实际邮件可能在计划时间后数分钟到达。如需改时间，编辑 `.github/workflows/daily-ai-news.yml` 中的 cron。
+工作流默认每天北京时间 08:05 和 22:05 运行，也可以在 Actions 页面手动触发。Cron 使用 `00:05 / 14:05 UTC`，换算为上述北京时间，并避开 GitHub Actions 整点调度高峰。实际邮件仍可能在计划时间后数分钟到达。如需改时间，编辑 `.github/workflows/daily-ai-news.yml` 中的 cron。
 
 ## 6. 自定义资讯源
 
@@ -113,3 +113,9 @@ LLM_MODEL=deepseek-v4-flash
 - `.env` 已被 `.gitignore` 忽略，不要将授权码提交到 GitHub。
 - GitHub Actions 使用 Repository Secrets，不在仓库中保存明文密钥。
 - 邮件内容是自动摘要，重要信息请点击原文核实。
+
+## 定时调度状态
+
+GitHub Actions 定时推送已启用。正式推送时间为每天北京时间 08:05 和 22:05；调试期间可以临时修改工作流中的 UTC Cron 表达式，验证完成后应恢复正式时间。
+
+调度同步记录：2026-07-15。
