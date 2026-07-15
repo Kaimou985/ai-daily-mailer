@@ -4,7 +4,7 @@ on:
   schedule:
     # 临时定时测试：02:15 UTC = 北京时间 10:15。
     # 测试成功后请恢复为每天 08:05 / 22:05。
-    - cron: "15 2 * * *"
+    - cron: "20 5 * * *"
   workflow_dispatch:
 
 permissions:
